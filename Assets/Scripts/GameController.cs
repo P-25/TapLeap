@@ -11,14 +11,18 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI currentScoreText;
     public TextMeshProUGUI bestScoreText;
     public TextMeshProUGUI startText;
-    public TextMeshProUGUI musicStart;
-    public TextMeshProUGUI musicStop;
+    public GameObject logoImage;
+    public GameObject musicStart;
+    public GameObject musicStop;
+
+     public SoundManager soundManager; 
+
 
     int currentScore;
 
     void Start()
     {
-        currentScore = 0;
+        LoadSavedScore();
         bestScoreText.text = PlayerPrefs.GetInt("BestScore", 0).ToString();
         SetScore();
     }
@@ -28,6 +32,7 @@ public class GameController : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             startText.gameObject.SetActive(false);
+            logoImage.gameObject.SetActive(false);
         }
     }
 
@@ -39,13 +44,43 @@ public class GameController : MonoBehaviour
     IEnumerator GameOver()
     {
         yield return new WaitForSeconds(0.5f);
+        int isMusicPlaying = PlayerPrefs.GetInt("MusicPlaying", 1); // Default value of 1 (true)
+
+        // Check if music is playing (1 represents true, 0 represents false)
+        if (isMusicPlaying == 1)
+        {
+            musicStart.gameObject.SetActive(true);
+            musicStop.gameObject.SetActive(false);
+        }
+        else
+        {
+            musicStart.gameObject.SetActive(true);
+            musicStop.gameObject.SetActive(false);
+        }
         gameOverPanel.SetActive(true);
         yield break;
     }
 
     public void Restart()
     {
+        SaveCurrentScore(); // Save current score before reloading
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    void SaveCurrentScore()
+    {
+        Debug.Log("currentScore: " + currentScore);
+        PlayerPrefs.SetInt("CurrentScore", currentScore);
+    }
+
+    void LoadSavedScore()
+    {
+        int savedScore = PlayerPrefs.GetInt("CurrentScore", 0);
+        if (savedScore > 0)
+        {
+            currentScore = savedScore;
+            PlayerPrefs.DeleteKey("CurrentScore"); // Remove the saved score after loading
+        }
     }
 
     public void AddScore()
@@ -63,4 +98,20 @@ public class GameController : MonoBehaviour
     {
         currentScoreText.text = currentScore.ToString();
     }
+
+    public void StopMusic()
+    {
+        PlayerPrefs.SetInt("MusicPlaying", 0);
+        soundManager.PauseMusic(); 
+        musicStop.gameObject.SetActive(true);
+        musicStart.gameObject.SetActive(false);
+    }
+    public void PlayMusic()
+    {
+        PlayerPrefs.SetInt("MusicPlaying", 1);
+        soundManager.ResumeMusic(); 
+        musicStart.gameObject.SetActive(true);
+        musicStop.gameObject.SetActive(false);
+    }
+  
 }

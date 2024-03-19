@@ -23,6 +23,8 @@ public class ObstacleParent : MonoBehaviour
                     Destroy(this.gameObject);
                 }
                 yield return new WaitForSeconds(1.0f);
+            }else{
+                yield return new WaitForSeconds(1.0f);
             }
         }
     }
