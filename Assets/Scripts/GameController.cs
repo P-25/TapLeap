@@ -41,10 +41,16 @@ public class GameController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         gameOverPanel.SetActive(true);
+        
         yield break;
     }
 
     public void Restart()
+    {
+        PlayerPrefs.SetInt("CurrentScore", 0);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    public void SaveAndRestart()
     {
         SaveCurrentScore(); // Save current score before reloading
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
