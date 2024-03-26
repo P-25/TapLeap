@@ -58,7 +58,6 @@ public class GameController : MonoBehaviour
 
     void SaveCurrentScore()
     {
-        Debug.Log("currentScore: " + currentScore);
         PlayerPrefs.SetInt("CurrentScore", currentScore);
     }
 

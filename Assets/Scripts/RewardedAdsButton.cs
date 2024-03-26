@@ -5,50 +5,47 @@ using UnityEngine.Advertisements;
 public class RewardedAdsButton : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowListener
 {
     [SerializeField] Button _showAdButton;
-    [SerializeField] string _androidAdUnitId = "Rewarded_Android";
+    // [SerializeField] string _androidAdUnitId = "Rewarded_Android";
     // [SerializeField] string _iOSAdUnitId = "Rewarded_iOS";
     string _adUnitId = "Rewarded_Android"; // This will remain Rewarded_Android for android support only
  
  
      [SerializeField] GameController gameController;
+
+    void Awake()
+    {   
+        LoadAd();
+    }
+ 
  
     // Call this public method when you want to get an ad ready to show.
     public void LoadAd()
     {
-        Debug.Log("load ad function: ");
          _showAdButton.interactable = false;
         // IMPORTANT! Only load content AFTER initialization (in this example, initialization is handled in a different script).
-        Debug.Log("Loading Ad: " + _adUnitId);
         Advertisement.Load(_adUnitId, this);
     }
     
     public void DisableButton()
     {
-        Debug.Log("disabled ad: ");
         _showAdButton.interactable = false;
     }
  
     // If the ad successfully loads, add a listener to the button and enable it:
     public void OnUnityAdsAdLoaded(string adUnitId)
-    {
-        Debug.Log("Ad Loaded: " + adUnitId);
- 
+    { 
         if (adUnitId.Equals(_adUnitId))
         {
-             Debug.Log("Ad configs:");
             // Configure the button to call the ShowAd() method when clicked:
             _showAdButton.onClick.AddListener(ShowAd);
             // Enable the button for users to click:
             _showAdButton.interactable = true;
-
-            Debug.Log("Ad configs 1:");
         }
     }
  
     // Implement a method to execute when the user clicks the button:
     public void ShowAd()
     {
-        Debug.Log("Ad showing 1:");
         // Disable the button:
         _showAdButton.interactable = false;
         // Then show the ad:
@@ -60,10 +57,9 @@ public class RewardedAdsButton : MonoBehaviour, IUnityAdsLoadListener, IUnityAds
     {
         if (adUnitId.Equals(_adUnitId) && showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
         {
-            Debug.Log("Unity Ads Rewarded Ad Completed");
             // Grant a reward.
             Advertisement.Load(_adUnitId, this);
-            // gameController.SaveAndRestart();
+            gameController.SaveAndRestart();
         }
     }
  
